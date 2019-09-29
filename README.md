@@ -9,6 +9,9 @@ pip install dis3
 
 pip install pyinstaller
 
-pyinstaller -w -i C:\Users\huoyu\Documents\GitHub\MedLabel\labelme\icons\icon.ico -F C:\Users\huoyu\Documents\GitHub\MedLabel\labelme\main.py
+pyinstaller labelme.spec
 
+If you see qt5 error, please copy the "imageformats" and "platforms" folders from
+C:\Users\huoyu\Anaconda3\envs\labelme\Library\plugins\
+to "dist" folder
 
