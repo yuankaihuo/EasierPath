@@ -57,7 +57,7 @@ def main():
         dest='auto_save',
         action='store_true',
         help='auto save',
-        default=argparse.SUPPRESS,
+        default=True,
     )
     parser.add_argument(
         '--nosortlabels',
