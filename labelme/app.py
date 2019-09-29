@@ -85,62 +85,26 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         self.labelList = LabelQListWidget()
+        self.new_docks_widgets = []
+        all_flags = get_flags()
+        additionalFlags = {}
+        for additional_flag in all_flags:
+            additionalFlags[additional_flag['name']] = {}
+            for mi in range(len(additional_flag['map'])):
+                additionalFlags[additional_flag['name']][additional_flag['map'][mi][0]] = additional_flag['map'][mi][1]
 
-        self.Glomerular_dock = self.Glomerular_widget = None
-        self.Glomerular_dock = QtWidgets.QDockWidget('Glomerular morphology', self)
-        self.Glomerular_dock.setObjectName('Glomerular')
-        self.Glomerular_widget = QtWidgets.QListWidget()
-        self.loadGlomerular(get_flags('Glomerular'))
-        self.Glomerular_dock.setWidget(self.Glomerular_widget)
-        self.Glomerular_widget.itemChanged.connect(self.setDirty)
+        for new_flag in all_flags:
+            new_flag['dock'] = None
+            new_flag['widget'] = None
+            new_flag['dock'] = QtWidgets.QDockWidget(new_flag['title'], self)
+            new_flag['dock'].setObjectName(new_flag['name'])
+            new_flag['widget'] = QtWidgets.QListWidget()
+            new_flag['widget'] = self.loadNewFlags(new_flag['widget'], additionalFlags[new_flag['name']])
+            new_flag['dock'].setWidget(new_flag['widget'])
+            new_flag['widget'].itemChanged.connect(self.setDirty)
+            new_flag['dock_name'] = '%s_dock'% (new_flag['name'])
+            self.new_docks_widgets.append(new_flag)
 
-        self.Bowman_dock = self.Bowman_widget = None
-        self.Bowman_dock = QtWidgets.QDockWidget('Bowman capsule & PECs', self)
-        self.Bowman_dock.setObjectName('Bowman')
-        self.Bowman_widget = QtWidgets.QListWidget()
-        self.loadBowman(get_flags('Bowman'))
-        self.Bowman_dock.setWidget(self.Bowman_widget)
-        self.Bowman_widget.itemChanged.connect(self.setDirty)
-
-        self.Podocyte_dock = self.Podocyte_widget = None
-        self.Podocyte_dock = QtWidgets.QDockWidget('Podocyte injury', self)
-        self.Podocyte_dock.setObjectName('Podocyte')
-        self.Podocyte_widget = QtWidgets.QListWidget()
-        self.loadPodocyte(get_flags('Podocyte'))
-        self.Podocyte_dock.setWidget(self.Podocyte_widget)
-        self.Podocyte_widget.itemChanged.connect(self.setDirty)
-
-        self.GBM_dock = self.GBM_widget = None
-        self.GBM_dock = QtWidgets.QDockWidget('GBM', self)
-        self.GBM_dock.setObjectName('GBM')
-        self.GBM_widget = QtWidgets.QListWidget()
-        self.loadGBM(get_flags('GBM'))
-        self.GBM_dock.setWidget(self.GBM_widget)
-        self.GBM_widget.itemChanged.connect(self.setDirty)
-
-        self.Capillary_dock = self.Capillary_widget = None
-        self.Capillary_dock = QtWidgets.QDockWidget('In capillary', self)
-        self.Capillary_dock.setObjectName('Capillary')
-        self.Capillary_widget = QtWidgets.QListWidget()
-        self.loadCapillary(get_flags('Capillary'))
-        self.Capillary_dock.setWidget(self.Capillary_widget)
-        self.Capillary_widget.itemChanged.connect(self.setDirty)
-
-        self.Mesangial_dock = self.Mesangial_widget = None
-        self.Mesangial_dock = QtWidgets.QDockWidget('Mesangial', self)
-        self.Mesangial_dock.setObjectName('Mesangial')
-        self.Mesangial_widget = QtWidgets.QListWidget()
-        self.loadMesangial(get_flags('Mesangial'))
-        self.Mesangial_dock.setWidget(self.Mesangial_widget)
-        self.Mesangial_widget.itemChanged.connect(self.setDirty)
-
-        self.Other_dock = self.Other_widget = None
-        self.Other_dock = QtWidgets.QDockWidget('Other', self)
-        self.Other_dock.setObjectName('Other')
-        self.Other_widget = QtWidgets.QListWidget()
-        self.loadOther(get_flags('Other'))
-        self.Other_dock.setWidget(self.Other_widget)
-        self.Other_widget.itemChanged.connect(self.setDirty)
 
 
         self.lastOpenDir = None
@@ -220,9 +184,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(scrollArea)
 
         features = QtWidgets.QDockWidget.DockWidgetFeatures()
-        for dock in ['flag_dock', 'label_dock', 'shape_dock', 'file_dock',
-                     'Glomerular_dock','Bowman_dock','Podocyte_dock','GBM_dock',
-                     'Capillary_dock', 'Mesangial_dock', 'Other_dock']:
+        for dock in ['flag_dock', 'label_dock', 'shape_dock', 'file_dock']:
+        # for dock in ['flag_dock', 'label_dock', 'shape_dock', 'file_dock',
+        #              'Glomerular_dock','Bowman_dock','Podocyte_dock','GBM_dock',
+        #              'Capillary_dock', 'Mesangial_dock', 'Other_dock']:
             if self._config[dock]['closable']:
                 features = features | QtWidgets.QDockWidget.DockWidgetClosable
             if self._config[dock]['floatable']:
@@ -237,13 +202,22 @@ class MainWindow(QtWidgets.QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self.label_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.shape_dock)
         self.addDockWidget(Qt.RightDockWidgetArea, self.file_dock)
-        self.addDockWidget(Qt.TopDockWidgetArea, self.Glomerular_dock)
-        self.addDockWidget(Qt.TopDockWidgetArea, self.Bowman_dock)
-        self.addDockWidget(Qt.TopDockWidgetArea, self.Podocyte_dock)
-        self.addDockWidget(Qt.TopDockWidgetArea, self.GBM_dock)
-        self.addDockWidget(Qt.TopDockWidgetArea, self.Capillary_dock)
-        self.addDockWidget(Qt.TopDockWidgetArea, self.Mesangial_dock)
-        self.addDockWidget(Qt.TopDockWidgetArea, self.Other_dock)
+
+        #add new docks
+        for di in range(len(self.new_docks_widgets)):
+            additional_flag = self.new_docks_widgets[di]
+            dock = additional_flag['dock_name']
+            if self._config[dock]['closable']:
+                features = features | QtWidgets.QDockWidget.DockWidgetClosable
+            if self._config[dock]['floatable']:
+                features = features | QtWidgets.QDockWidget.DockWidgetFloatable
+            if self._config[dock]['movable']:
+                features = features | QtWidgets.QDockWidget.DockWidgetMovable
+            additional_flag['dock'].setFeatures(features)
+            if self._config[dock]['show'] is False:
+                additional_flag['dock'].setVisible(False)
+
+            self.addDockWidget(Qt.TopDockWidgetArea, additional_flag['dock'])
         # self.splitDockWidget(self.Bowman_dock,  self.GBM_dock, Qt.Vertical )
 
         # Actions
@@ -589,7 +563,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.label_dock.toggleViewAction(),
                 self.shape_dock.toggleViewAction(),
                 self.file_dock.toggleViewAction(),
-                self.Glomerular_dock.toggleViewAction(),
                 None,
                 fill_drawing,
                 None,
@@ -1065,82 +1038,49 @@ class MainWindow(QtWidgets.QMainWindow):
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
             self.flag_widget.addItem(item)
 
-    def loadGlomerular(self, flags):
-        self.Glomerular_widget.clear()
-        for fi in range(len(flags)):
-            key = flags[fi][0]
-            flag = flags[fi][1]
+    def loadNewFlags(self, widget, flags):
+        widget.clear()
+        for key in flags.keys():
+            flag = flags[key]
             item = QtWidgets.QListWidgetItem(key)
             item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
             item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
-            self.Glomerular_widget.addItem(item)
-
-    def loadBowman(self, flags):
-        self.Bowman_widget.clear()
-        for fi in range(len(flags)):
-            key = flags[fi][0]
-            flag = flags[fi][1]
-            item = QtWidgets.QListWidgetItem(key)
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
-            self.Bowman_widget.addItem(item)
+            widget.addItem(item)
+        return widget
 
 
-    def loadPodocyte(self, flags):
-        self.Podocyte_widget.clear()
-        for fi in range(len(flags)):
-            key = flags[fi][0]
-            flag = flags[fi][1]
-            item = QtWidgets.QListWidgetItem(key)
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
-            self.Podocyte_widget.addItem(item)
+    def getFlags(self, flag_name):
+        flags = {}
+        if flag_name == 'Flags':
+            widget = self.flag_widget
+        for i in range(widget.count()):
+            item = widget.item(i)
+            key = item.text()
+            flag = item.checkState() == Qt.Checked
+            flags[key] = flag
+        return flags
 
-    def loadGBM(self, flags):
-        self.GBM_widget.clear()
-        for fi in range(len(flags)):
-            key = flags[fi][0]
-            flag = flags[fi][1]
-            item = QtWidgets.QListWidgetItem(key)
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
-            self.GBM_widget.addItem(item)
+    def getAdditionalFlags(self):
+        additionalFlags = {}
+        for fi in range(len(self.new_docks_widgets)):
+            dock_widget = self.new_docks_widgets[fi]
+            additionalFlags[dock_widget['name']] = {}
+            for i in range(dock_widget['widget'].count()):
+                item = dock_widget['widget'].item(i)
+                key = item.text()
+                flag = item.checkState() == Qt.Checked
+                additionalFlags[dock_widget['name']][key] = flag
+        return additionalFlags
 
-    def loadCapillary(self, flags):
-        self.Capillary_widget.clear()
-        for fi in range(len(flags)):
-            key = flags[fi][0]
-            flag = flags[fi][1]
-            item = QtWidgets.QListWidgetItem(key)
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
-            self.Capillary_widget.addItem(item)
 
-    def loadMesangial(self, flags):
-        self.Mesangial_widget.clear()
-        for fi in range(len(flags)):
-            key = flags[fi][0]
-            flag = flags[fi][1]
-            item = QtWidgets.QListWidgetItem(key)
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
-            self.Mesangial_widget.addItem(item)
 
-    def loadOther(self, flags):
-        self.Other_widget.clear()
-        for fi in range(len(flags)):
-            key = flags[fi][0]
-            flag = flags[fi][1]
-            item = QtWidgets.QListWidgetItem(key)
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            item.setCheckState(Qt.Checked if flag else Qt.Unchecked)
-            self.Other_widget.addItem(item)
+
 
     def saveLabels(self, filename):
         lf = LabelFile()
 
         def format_shape(s):
-            return dict(
+            dicts = dict(
                 label=s.label.encode('utf-8') if PY2 else s.label,
                 line_color=s.line_color.getRgb()
                 if s.line_color != self.lineColor else None,
@@ -1151,13 +1091,18 @@ class MainWindow(QtWidgets.QMainWindow):
                 flags=s.flags
             )
 
-        shapes = [format_shape(shape) for shape in self.labelList.shapes]
-        flags = {}
-        for i in range(self.flag_widget.count()):
-            item = self.flag_widget.item(i)
-            key = item.text()
-            flag = item.checkState() == Qt.Checked
-            flags[key] = flag
+            return dicts
+
+        shapes = []
+        for shape in self.labelList.shapes:
+            shape_f = format_shape(shape)
+            shapes.append(shape_f)
+
+
+        # shapes = [format_shape(shape) for shape in self.labelList.shapes]
+        flags = self.getFlags( 'Flags')
+        additional_flags = self.getAdditionalFlags()
+
         try:
             imagePath = osp.relpath(
                 self.imagePath, osp.dirname(filename))
@@ -1175,6 +1120,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 fillColor=self.fillColor.getRgb(),
                 otherData=self.otherData,
                 flags=flags,
+                additional_flags=additional_flags,
             )
             self.labelFile = lf
             items = self.fileListWidget.findItems(
@@ -1386,6 +1332,18 @@ class MainWindow(QtWidgets.QMainWindow):
             self.loadLabels(self.labelFile.shapes)
             if self.labelFile.flags is not None:
                 self.loadFlags(self.labelFile.flags)
+            if self.labelFile.additionalFlags is not None: #yuankai add to load additional flags
+                for ni in range(len(self.new_docks_widgets)):
+                    flag_name = self.new_docks_widgets[ni]['name']
+                    self.new_docks_widgets[ni]['widget'] = self.loadNewFlags(self.new_docks_widgets[ni]['widget'], self.labelFile.additionalFlags[flag_name])
+        else: #yuankai add to init the self.new_docks_widgets
+            all_flags = get_flags()
+            for nn in range(len(self.new_docks_widgets)):
+                flag_name0 = self.new_docks_widgets[nn]['name']
+                map0 = {}
+                for mi in range(len(all_flags[nn]['map'])):
+                    map0[all_flags[nn]['map'][mi][0]] = all_flags[nn]['map'][mi][1]
+                self.new_docks_widgets[nn]['widget'] = self.loadNewFlags(self.new_docks_widgets[nn]['widget'],map0)
         if self._config['keep_prev'] and not self.labelList.shapes:
             self.loadShapes(prev_shapes, replace=False)
         self.setClean()
@@ -1552,17 +1510,19 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.imageList.index(current_filename))
             self.fileListWidget.repaint()
 
+    #click save file
     def saveFile(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
-        if self._config['flags'] or self.hasLabels():
-            if self.labelFile:
-                # DL20180323 - overwrite when in directory
-                self._saveFile(self.labelFile.filename)
-            elif self.output_file:
-                self._saveFile(self.output_file)
-                self.close()
-            else:
-                self._saveFile(self.saveFileDialog())
+        # if self._config['flags'] :
+        # if self._config['flags'] or self.hasLabels():
+        if self.labelFile:
+            # DL20180323 - overwrite when in directory
+            self._saveFile(self.labelFile.filename)
+        elif self.output_file:
+            self._saveFile(self.output_file)
+            self.close()
+        else:
+            self._saveFile(self.saveFileDialog())
 
     def saveFileAs(self, _value=False):
         assert not self.image.isNull(), "cannot save empty image"
