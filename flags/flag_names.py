@@ -4,7 +4,9 @@ flag_dict['Glomerular']['title'] = 'Glomerular morphology'
 flag_dict['Glomerular']['map'] = [
             ('Hypertrophy', False),
             ('Necrosis', False),
-            ('Global sclerosis', False),
+            ('Global disappearing glomerulosclerosis', False),
+            ('Global solidified glomerulosclerosis', False),
+            ('Global obsolescent glomerulosclerosis', False),
             ('Segmental sclerosis', False),
             ('Enlarged capsule space', False)
             ]
@@ -14,7 +16,10 @@ flag_dict['Bowman']['title'] = 'Bowman capsule & PECs'
 flag_dict['Bowman']['map'] = [
             ('Periglomerular fibrosis', False),
             ('Capsular drop', False),
-            ('Crescent', False),
+            ('Cellular crescent', False),
+            ('Fibrocellular crescent', False),
+            ('Fibrous crescent', False),
+            ('Capsule broken', False),
             ]
 
 flag_dict['Podocyte'] = {}
@@ -33,6 +38,7 @@ flag_dict['GBM']['map'] = [
             ('Spike', False),
             ('Bubble-like', False),
             ('Corrugated', False),
+            ('GBM broken', False),
             ]
 
 flag_dict['Capillary'] = {}
@@ -40,7 +46,7 @@ flag_dict['Capillary']['title'] = 'In capillary'
 flag_dict['Capillary']['map'] = [
             ('Thrombi', False),
             ('Glomerulitis', False),
-            ('Endocapillary proliferation', False),
+            ('Endocapillary hypercellularity', False),
             ('Microaneurysm', False),
             ]
 
@@ -50,6 +56,8 @@ flag_dict['Mesangial']['map'] = [
             ('Proliferation', False),
             ('Nodular', False),
             ('Mesangiolysis', False),
+            ('Expansion', False),
+            ('Hyalinosis', False),
             ]
 
 flag_dict['Other'] = {}
