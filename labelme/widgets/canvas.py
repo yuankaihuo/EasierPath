@@ -86,7 +86,7 @@ class Canvas(QtWidgets.QWidget):
 
     @createMode.setter
     def createMode(self, value):
-        if value not in ['polygon', 'rectangle', 'circle',
+        if value not in ['polygon', 'rectangle', 'circle', 'segmentation',
            'line', 'point', 'linestrip']:
             raise ValueError('Unsupported createMode: %s' % value)
         self._createMode = value
@@ -156,9 +156,15 @@ class Canvas(QtWidgets.QWidget):
             else:
                 pos = self.transformPos(ev.posF())
 
-            print(pos)
         except AttributeError:
             return
+
+        if ev.buttons() == QtCore.Qt.NoButton:
+            print("Simple mouse motion")
+        elif ev.buttons() == QtCore.Qt.LeftButton:
+            print("Left click drag")
+        elif ev.buttons() == QtCore.Qt.RightButton:
+            print("Right click drag")
 
         self.prevMovePoint = pos
         self.restoreCursor()
@@ -184,9 +190,24 @@ class Canvas(QtWidgets.QWidget):
                 color = self.current.line_color
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
+            elif len(self.current) > 1 and self.createMode == 'segmentation' and\
+                    self.closeEnough(pos, self.current[0]):
+                # Attract line to starting point and
+                # colorise to alert the user.
+                pos = self.current[0]
+                color = self.current.line_color
+                self.overrideCursor(CURSOR_POINT)
+                self.current.highlightVertex(0, Shape.NEAR_VERTEX)
             if self.createMode in ['polygon', 'linestrip']:
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
+            elif self.createMode == 'segmentation':
+                self.current.addPoint(self.line[1])
+                self.line[0] = self.current[-1]
+                self.line[1] = pos
+                # if self.current.isClosed():
+                #     self.finalise()
+
             elif self.createMode == 'rectangle':
                 self.line.points = [self.current[0], pos]
                 self.line.close()
@@ -299,6 +320,11 @@ class Canvas(QtWidgets.QWidget):
                         self.line[0] = self.current[-1]
                         if self.current.isClosed():
                             self.finalise()
+                    if self.createMode == 'segmentation':
+                        self.current.addPoint(self.line[1])
+                        self.line[0] = self.current[-1]
+                        # if self.current.isClosed():
+                            # self.finalise()
                     elif self.createMode in ['rectangle', 'circle', 'line']:
                         assert len(self.current.points) == 1
                         self.current.points = self.line.points
@@ -517,6 +543,14 @@ class Canvas(QtWidgets.QWidget):
             drawing_shape.fill_color.setAlpha(64)
             drawing_shape.paint(p)
 
+        if (self.fillDrawing() and self.createMode == 'segmentation' and
+                self.current is not None and len(self.current.points) >= 2):
+            drawing_shape = self.current.copy()
+            drawing_shape.addPoint(self.line[1])
+            drawing_shape.fill = True
+            drawing_shape.fill_color.setAlpha(64)
+            drawing_shape.paint(p)
+
         p.end()
 
     def transformPos(self, point):
@@ -665,7 +699,7 @@ class Canvas(QtWidgets.QWidget):
         assert self.shapes
         self.current = self.shapes.pop()
         self.current.setOpen()
-        if self.createMode in ['polygon', 'linestrip']:
+        if self.createMode in ['polygon', 'linestrip', 'segmentation']:
             self.line.points = [self.current[-1], self.current[0]]
         elif self.createMode in ['rectangle', 'line', 'circle']:
             self.current.points = self.current.points[0:1]

@@ -299,9 +299,19 @@ class MainWindow(QtWidgets.QMainWindow):
             lambda: self.toggleDrawMode(False, createMode='polygon'),
             shortcuts['create_polygon'],
             'objects',
-            'Start drawing polygons',
+            'Start drawing segmentation',
             enabled=False,
         )
+
+        createSegmentationMode = action(
+            'Create Segmentations',
+            lambda: self.toggleDrawMode(False, createMode='segmentation'),
+            shortcuts['create_segmentation'],
+            'objects',
+            'Start drawing segmentation',
+            enabled=False,
+        )
+
         createRectangleMode = action(
             'Create Rectangle',
             lambda: self.toggleDrawMode(False, createMode='rectangle'),
@@ -464,6 +474,7 @@ class MainWindow(QtWidgets.QMainWindow):
             undoLastPoint=undoLastPoint, undo=undo,
             addPointToEdge=addPointToEdge,
             createMode=createMode, editMode=editMode,
+            createSegmentationMode=createSegmentationMode,
             createRectangleMode=createRectangleMode,
             createCircleMode=createCircleMode,
             createLineMode=createLineMode,
@@ -495,6 +506,7 @@ class MainWindow(QtWidgets.QMainWindow):
             # menu shown at right click
             menu=(
                 createMode,
+                createSegmentationMode,
                 createRectangleMode,
                 createCircleMode,
                 createLineMode,
@@ -513,6 +525,7 @@ class MainWindow(QtWidgets.QMainWindow):
             onLoadActive=(
                 close,
                 createMode,
+                createSegmentationMode,
                 createRectangleMode,
                 createCircleMode,
                 createLineMode,
@@ -563,6 +576,12 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.label_dock.toggleViewAction(),
                 self.shape_dock.toggleViewAction(),
                 self.file_dock.toggleViewAction(),
+                self.new_docks_widgets[0]['dock'].toggleViewAction(),
+                self.new_docks_widgets[1]['dock'].toggleViewAction(),
+                self.new_docks_widgets[2]['dock'].toggleViewAction(),
+                self.new_docks_widgets[3]['dock'].toggleViewAction(),
+                self.new_docks_widgets[4]['dock'].toggleViewAction(),
+                self.new_docks_widgets[5]['dock'].toggleViewAction(),
                 None,
                 fill_drawing,
                 None,
@@ -712,6 +731,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.menus.edit.clear()
         actions = (
             self.actions.createMode,
+            self.actions.createSegmentationMode,
             self.actions.createRectangleMode,
             self.actions.createCircleMode,
             self.actions.createLineMode,
@@ -741,6 +761,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.dirty = False
         self.actions.save.setEnabled(False)
         self.actions.createMode.setEnabled(True)
+        self.actions.createSegmentationMode.setEnabled(True)
         self.actions.createRectangleMode.setEnabled(True)
         self.actions.createCircleMode.setEnabled(True)
         self.actions.createLineMode.setEnabled(True)
@@ -818,6 +839,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.canvas.createMode = createMode
         if edit:
             self.actions.createMode.setEnabled(True)
+            self.actions.createSegmentationMode.setEnabled(True)
             self.actions.createRectangleMode.setEnabled(True)
             self.actions.createCircleMode.setEnabled(True)
             self.actions.createLineMode.setEnabled(True)
@@ -826,6 +848,15 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             if createMode == 'polygon':
                 self.actions.createMode.setEnabled(False)
+                self.actions.createSegmentationMode.setEnabled(True)
+                self.actions.createRectangleMode.setEnabled(True)
+                self.actions.createCircleMode.setEnabled(True)
+                self.actions.createLineMode.setEnabled(True)
+                self.actions.createPointMode.setEnabled(True)
+                self.actions.createLineStripMode.setEnabled(True)
+            elif createMode == 'segmentation':
+                self.actions.createMode.setEnabled(True)
+                self.actions.createSegmentationMode.setEnabled(False)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -833,6 +864,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
             elif createMode == 'rectangle':
                 self.actions.createMode.setEnabled(True)
+                self.actions.createSegmentationMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(False)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -840,6 +872,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
             elif createMode == 'line':
                 self.actions.createMode.setEnabled(True)
+                self.actions.createSegmentationMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(False)
@@ -847,6 +880,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
             elif createMode == 'point':
                 self.actions.createMode.setEnabled(True)
+                self.actions.createSegmentationMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)
@@ -854,6 +888,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
             elif createMode == "circle":
                 self.actions.createMode.setEnabled(True)
+                self.actions.createSegmentationMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(False)
                 self.actions.createLineMode.setEnabled(True)
@@ -861,6 +896,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.actions.createLineStripMode.setEnabled(True)
             elif createMode == "linestrip":
                 self.actions.createMode.setEnabled(True)
+                self.actions.createSegmentationMode.setEnabled(True)
                 self.actions.createRectangleMode.setEnabled(True)
                 self.actions.createCircleMode.setEnabled(True)
                 self.actions.createLineMode.setEnabled(True)

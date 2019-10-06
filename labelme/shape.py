@@ -70,7 +70,7 @@ class Shape(object):
     def shape_type(self, value):
         if value is None:
             value = 'polygon'
-        if value not in ['polygon', 'rectangle', 'point',
+        if value not in ['polygon', 'segmentation','rectangle', 'point',
            'line', 'circle', 'linestrip']:
             raise ValueError('Unexpected shape_type: {}'.format(value))
         self._shape_type = value
@@ -122,6 +122,14 @@ class Shape(object):
                     line_path.addRect(rectangle)
                 for i in range(len(self.points)):
                     self.drawVertex(vrtx_path, i)
+            elif self.shape_type == 'segmentation':
+                line_path.moveTo(self.points[0])
+                for i, p in enumerate(self.points):
+                    line_path.lineTo(p)
+                    self.drawVertex(vrtx_path, i)
+                if self.isClosed():
+                    line_path.lineTo(self.points[0])
+
             elif self.shape_type == "circle":
                 assert len(self.points) in [1, 2]
                 if len(self.points) == 2:
@@ -213,6 +221,10 @@ class Shape(object):
             if len(self.points) == 2:
                 rectangle = self.getRectFromLine(*self.points)
                 path.addRect(rectangle)
+        elif self.shape_type == 'segmentation':
+            path = QtGui.QPainterPath(self.points[0])
+            for p in self.points[1:]:
+                path.lineTo(p)
         elif self.shape_type == "circle":
             path = QtGui.QPainterPath()
             if len(self.points) == 2:
