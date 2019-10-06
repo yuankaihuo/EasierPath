@@ -99,6 +99,7 @@ shortcuts:
   fit_width: Ctrl+Shift+F
 
   create_polygon: Ctrl+N
+  create_segmentation: Ctrl+S
   create_rectangle: Ctrl+R
   create_circle: null
   create_line: null
