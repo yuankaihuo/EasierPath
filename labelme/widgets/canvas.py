@@ -370,8 +370,9 @@ class Canvas(QtWidgets.QWidget):
         elif ev.button() == QtCore.Qt.LeftButton and self.selectedShapes:
             self.overrideCursor(CURSOR_GRAB)
 
-        if self.current.isClosed():  # yuankai add
-            self.finalise_auto()
+        if not self.current == None:
+            if self.current.isClosed():  # yuankai add
+                self.finalise_auto()
 
         if self.movingShape:
             self.storeShapes()
