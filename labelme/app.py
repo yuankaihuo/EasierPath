@@ -20,6 +20,7 @@ from labelme.label_file import LabelFileError
 from labelme.logger import logger
 from labelme.shape import DEFAULT_FILL_COLOR
 from labelme.shape import DEFAULT_LINE_COLOR
+from labelme.shape import DEFAULT_SEG_LINE_COLOR
 from labelme.shape import Shape
 from labelme.widgets import Canvas
 from labelme.widgets import ColorDialog

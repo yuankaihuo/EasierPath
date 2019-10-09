@@ -159,12 +159,12 @@ class Canvas(QtWidgets.QWidget):
         except AttributeError:
             return
 
-        if ev.buttons() == QtCore.Qt.NoButton:
-            print("Simple mouse motion")
-        elif ev.buttons() == QtCore.Qt.LeftButton:
-            print("Left click drag")
-        elif ev.buttons() == QtCore.Qt.RightButton:
-            print("Right click drag")
+        # if ev.buttons() == QtCore.Qt.NoButton:
+        #     print("Simple mouse motion")
+        # elif ev.buttons() == QtCore.Qt.LeftButton:
+        #     print("Left click drag")
+        # elif ev.buttons() == QtCore.Qt.RightButton:
+        #     print("Right click drag")
 
         self.prevMovePoint = pos
         self.restoreCursor()
@@ -190,7 +190,7 @@ class Canvas(QtWidgets.QWidget):
                 color = self.current.line_color
                 self.overrideCursor(CURSOR_POINT)
                 self.current.highlightVertex(0, Shape.NEAR_VERTEX)
-            elif len(self.current) > 1 and self.createMode == 'segmentation' and\
+            elif len(self.current) > 3 and self.createMode == 'segmentation' and\
                     self.closeEnough(pos, self.current[0]):
                 # Attract line to starting point and
                 # colorise to alert the user.
@@ -202,12 +202,10 @@ class Canvas(QtWidgets.QWidget):
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
             elif self.createMode == 'segmentation':
-                self.current.addPoint(self.line[1])
                 self.line[0] = self.current[-1]
                 self.line[1] = pos
-                # if self.current.isClosed():
-                #     self.finalise()
-
+                if ev.buttons() == QtCore.Qt.LeftButton:
+                    self.current.addPoint(self.line[1])
             elif self.createMode == 'rectangle':
                 self.line.points = [self.current[0], pos]
                 self.line.close()
@@ -321,8 +319,10 @@ class Canvas(QtWidgets.QWidget):
                         if self.current.isClosed():
                             self.finalise()
                     if self.createMode == 'segmentation':
-                        self.current.addPoint(self.line[1])
-                        self.line[0] = self.current[-1]
+                        if not hasattr(self, 'points'):
+                            self.current.addPoint(pos)
+                        # self.overrideCursor(CURSOR_MOVE) # change to hand
+                        # self.line[0] = self.current[-1]
                         # if self.current.isClosed():
                             # self.finalise()
                     elif self.createMode in ['rectangle', 'circle', 'line']:
@@ -369,6 +369,11 @@ class Canvas(QtWidgets.QWidget):
                 self.repaint()
         elif ev.button() == QtCore.Qt.LeftButton and self.selectedShapes:
             self.overrideCursor(CURSOR_GRAB)
+
+        if not self.current == None:
+            if self.current.isClosed():  # yuankai add
+                self.finalise_auto()
+
         if self.movingShape:
             self.storeShapes()
             self.shapeMoved.emit()
@@ -571,6 +576,16 @@ class Canvas(QtWidgets.QWidget):
         return not (0 <= p.x() <= w - 1 and 0 <= p.y() <= h - 1)
 
     def finalise(self):
+        assert self.current
+        self.current.close()
+        self.shapes.append(self.current)
+        self.storeShapes()
+        self.current = None
+        self.setHiding(False)
+        self.newShape.emit()
+        self.update()
+
+    def finalise_auto(self):
         assert self.current
         self.current.close()
         self.shapes.append(self.current)
