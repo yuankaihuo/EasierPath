@@ -13,6 +13,7 @@ import labelme.utils
 
 DEFAULT_LINE_COLOR = QtGui.QColor(0, 255, 0, 128)
 DEFAULT_FILL_COLOR = QtGui.QColor(255, 0, 0, 128)
+DEFAULT_SEG_LINE_COLOR = QtGui.QColor(0, 0, 255, 255)
 DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)
 DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(0, 128, 255, 155)
 DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(0, 255, 0, 255)
@@ -28,6 +29,7 @@ class Shape(object):
     # The following class variables influence the drawing of all shape objects.
     line_color = DEFAULT_LINE_COLOR
     fill_color = DEFAULT_FILL_COLOR
+    seg_line_color = DEFAULT_SEG_LINE_COLOR
     select_line_color = DEFAULT_SELECT_LINE_COLOR
     select_fill_color = DEFAULT_SELECT_FILL_COLOR
     vertex_fill_color = DEFAULT_VERTEX_FILL_COLOR
@@ -105,11 +107,17 @@ class Shape(object):
 
     def paint(self, painter):
         if self.points:
-            color = self.select_line_color \
-                if self.selected else self.line_color
-            pen = QtGui.QPen(color)
-            # Try using integer sizes for smoother drawing(?)
-            pen.setWidth(max(1, int(round(2.0 / self.scale))))
+            if self.shape_type == 'segmentation':
+                color = self.seg_line_color
+                pen = QtGui.QPen(color)
+                pen.setWidth(max(2, int(round(4.0 / self.scale))))
+                painter.setPen(pen)
+            else:
+                color = self.select_line_color \
+                    if self.selected else self.line_color
+                pen = QtGui.QPen(color)
+                # Try using integer sizes for smoother drawing(?)
+                pen.setWidth(max(1, int(round(2.0 / self.scale))))
             painter.setPen(pen)
 
             line_path = QtGui.QPainterPath()
@@ -126,7 +134,7 @@ class Shape(object):
                 line_path.moveTo(self.points[0])
                 for i, p in enumerate(self.points):
                     line_path.lineTo(p)
-                    self.drawVertex(vrtx_path, i)
+                    # self.drawVertex(vrtx_path, i)
                 if self.isClosed():
                     line_path.lineTo(self.points[0])
 
