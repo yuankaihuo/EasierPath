@@ -353,7 +353,8 @@ class MainWindow(QtWidgets.QMainWindow):
             'Start drawing linestrip. Ctrl+LeftClick ends creation.',
             enabled=False,
         )
-        editMode = action('Edit Polygons', self.setEditMode,
+        # change the text under the icon from polygon to segmentation
+        editMode = action('Edit Segmentations', self.setEditMode,
                           shortcuts['edit_polygon'], 'edit',
                           'Move and edit the selected polygons', enabled=False)
 
@@ -621,7 +622,9 @@ class MainWindow(QtWidgets.QMainWindow):
             save,
             deleteFile,
             None,
-            createMode,
+            #createMode,
+            #change the button in toolbar
+            createSegmentationMode,
             editMode,
             copy,
             delete,
