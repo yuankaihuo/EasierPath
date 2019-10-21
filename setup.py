@@ -15,7 +15,7 @@ assert PY3 or PY2
 
 
 here = os.path.abspath(os.path.dirname(__file__))
-version_file = os.path.join(here, 'labelme', '_version.py')
+version_file = os.path.join(here, 'EasierPath', '_version.py')
 if PY3:
     import importlib
     version = importlib.machinery.SourceFileLoader(
@@ -100,25 +100,25 @@ def get_long_description():
     try:
         import github2pypi
         return github2pypi.replace_url(
-            slug='wkentaro/labelme', content=long_description
+            slug='yuankaihuo/EasierPath', content=long_description
         )
     except Exception:
         return long_description
 
 
 setup(
-    name='labelme',
+    name='EasierPath',
     version=version,
     packages=find_packages(),
-    description='Image Polygonal Annotation with Python',
+    description='Renal Pathology Annotation with Python',
     long_description=get_long_description(),
     long_description_content_type='text/markdown',
-    author='Kentaro Wada',
-    author_email='www.kentaro.wada@gmail.com',
-    url='https://github.com/wkentaro/labelme',
+    author='Yuankai Huo',
+    author_email='yuankai.huo@vanderbinlt.edu',
+    url='https://github.com/yuankaihuo/EasierPath',
     install_requires=install_requires,
     license='GPLv3',
-    keywords='Image Annotation, Machine Learning',
+    keywords='Image Annotation, Pathology',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -131,7 +131,7 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
-    package_data={'labelme': ['icons/*', 'config/*.yaml']},
+    package_data={'EasierPath': ['icons/*', 'config/*.yaml']},
     entry_points={
         'console_scripts': [
             'labelme=labelme.main:main',

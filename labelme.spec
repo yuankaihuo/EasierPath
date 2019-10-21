@@ -28,7 +28,7 @@ exe = EXE(
     a.binaries,
     a.zipfiles,
     a.datas,
-    name='labelme',
+    name='EasierPath',
     debug=False,
     strip=False,
     upx=True,
@@ -38,7 +38,7 @@ exe = EXE(
 )
 app = BUNDLE(
     exe,
-    name='labelme.app',
+    name='EasierPath.app',
     icon='labelme/icons/icon.icns',
     bundle_identifier=None,
     info_plist={'NSHighResolutionCapable': 'True'},
