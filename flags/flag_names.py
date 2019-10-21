@@ -67,10 +67,19 @@ flag_dict['Other']['map'] = [
             ('Karyorrhexis', False),
             ]
 
+flag_dict['Tumor'] = {}
+flag_dict['Tumor']['title'] = 'Tumor'
+flag_dict['Tumor']['map'] = [
+            ('Primary', False),
+            ('Cyst', False),
+            ('Others', False),
+            ]
+
 def get_flags():
 
     #change this window
-    flag_names = ['Glomerular', 'Bowman', 'Podocyte', 'GBM', 'Capillary','Mesangial','Other']
+    flag_names = ['Tumor']
+    # flag_names = ['Glomerular', 'Bowman', 'Podocyte', 'GBM', 'Capillary','Mesangial','Other']
 
     flag_dict_list = []
     for fi in range(len(flag_names)):
