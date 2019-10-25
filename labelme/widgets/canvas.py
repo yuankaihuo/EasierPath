@@ -667,6 +667,29 @@ class Canvas(QtWidgets.QWidget):
 
     def wheelEvent(self, ev):
         if QT5:
+            # zoom
+            delta = ev.angleDelta()
+            self.zoomRequest.emit(delta.y(), ev.pos())
+
+            # scroll
+            self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
+            self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
+        else:
+            if ev.orientation() == QtCore.Qt.Vertical:
+                # zoom
+                self.zoomRequest.emit(ev.delta(), ev.pos())
+
+                # scroll
+                self.scrollRequest.emit(
+                    ev.delta(),
+                    QtCore.Qt.Horizontal
+                    if (QtCore.Qt.ShiftModifier == int(mods))
+                    else QtCore.Qt.Vertical)
+            else:
+                self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
+        ev.accept()
+
+        '''if QT5:
             mods = ev.modifiers()
             delta = ev.angleDelta()
             if QtCore.Qt.ControlModifier == int(mods):
@@ -691,7 +714,7 @@ class Canvas(QtWidgets.QWidget):
                         else QtCore.Qt.Vertical)
             else:
                 self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
-        ev.accept()
+        ev.accept()'''
 
     def keyPressEvent(self, ev):
         key = ev.key()
