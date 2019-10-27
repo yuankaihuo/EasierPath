@@ -2,69 +2,69 @@ flag_dict = {}
 flag_dict['Glomerular'] = {}
 flag_dict['Glomerular']['title'] = 'Glomerular morphology'
 flag_dict['Glomerular']['map'] = [
-            ('Hypertrophy', False),
-            ('Necrosis', False),
-            ('Global disappearing glomerulosclerosis', False),
-            ('Global solidified glomerulosclerosis', False),
-            ('Global obsolescent glomerulosclerosis', False),
-            ('Segmental sclerosis', False),
-            ('Enlarged capsule space', False)
+            ('1.Hypertrophy', False),
+            ('2.Necrosis', False),
+            ('3.Global disappearing glomerulosclerosis', False),
+            ('4.Global solidified glomerulosclerosis', False),
+            ('5.Global obsolescent glomerulosclerosis', False),
+            ('6.Segmental sclerosis', False),
+            ('7.Enlarged capsule space', False)
             ]
 
 flag_dict['Bowman'] = {}
 flag_dict['Bowman']['title'] = 'Bowman capsule & PECs'
 flag_dict['Bowman']['map'] = [
-            ('Periglomerular fibrosis', False),
-            ('Capsular drop', False),
-            ('Cellular crescent', False),
-            ('Fibrocellular crescent', False),
-            ('Fibrous crescent', False),
-            ('Capsule broken', False),
+            ('1.Periglomerular fibrosis', False),
+            ('2.Capsular drop', False),
+            ('3.Cellular crescent', False),
+            ('4.Fibrocellular crescent', False),
+            ('5.Fibrous crescent', False),
+            ('6.Capsule broken', False),
             ]
 
 flag_dict['Podocyte'] = {}
 flag_dict['Podocyte']['title'] = 'Podocyte injury'
 flag_dict['Podocyte']['map'] = [
-            ('Tuft adhesion', False),
-            ('Collapsing tuft with podocyte hyperplasia', False),
-            ('Foam cell', False),
+            ('1.Tuft adhesion', False),
+            ('2.Collapsing tuft with podocyte hyperplasia', False),
+            ('3.Foam cell', False),
             ]
 
 flag_dict['GBM'] = {}
 flag_dict['GBM']['title'] = 'GBM'
 flag_dict['GBM']['map'] = [
-            ('Thick', False),
-            ('Double contour', False),
-            ('Spike', False),
-            ('Bubble-like', False),
-            ('Corrugated', False),
-            ('GBM broken', False),
+            ('1.Thick', False),
+            ('2.Double contour', False),
+            ('3.Spike', False),
+            ('4.Bubble-like', False),
+            ('5.Corrugated', False),
+            ('6.GBM broken', False),
             ]
 
 flag_dict['Capillary'] = {}
 flag_dict['Capillary']['title'] = 'In capillary'
 flag_dict['Capillary']['map'] = [
-            ('Thrombi', False),
-            ('Glomerulitis', False),
-            ('Endocapillary hypercellularity', False),
-            ('Microaneurysm', False),
+            ('1.Thrombi', False),
+            ('2.Glomerulitis', False),
+            ('3.Endocapillary hypercellularity', False),
+            ('4.Microaneurysm', False),
             ]
 
 flag_dict['Mesangial'] = {}
 flag_dict['Mesangial']['title'] = 'Mesangial'
 flag_dict['Mesangial']['map'] = [
-            ('Proliferation', False),
-            ('Nodular', False),
-            ('Mesangiolysis', False),
-            ('Expansion', False),
-            ('Hyalinosis', False),
+            ('1.Proliferation', False),
+            ('2.Nodular', False),
+            ('3.Mesangiolysis', False),
+            ('4.Expansion', False),
+            ('5.Hyalinosis', False),
             ]
 
 flag_dict['Other'] = {}
 flag_dict['Other']['title'] = 'Other'
 flag_dict['Other']['map'] = [
-            ('Wire loop', False),
-            ('Karyorrhexis', False),
+            ('1.Wire loop', False),
+            ('2.Karyorrhexis', False),
             ]
 
 flag_dict['Tumor'] = {}
