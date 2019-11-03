@@ -578,12 +578,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.label_dock.toggleViewAction(),
                 self.shape_dock.toggleViewAction(),
                 self.file_dock.toggleViewAction(),
-                self.new_docks_widgets[0]['dock'].toggleViewAction(),
-                self.new_docks_widgets[1]['dock'].toggleViewAction(),
-                self.new_docks_widgets[2]['dock'].toggleViewAction(),
-                self.new_docks_widgets[3]['dock'].toggleViewAction(),
-                self.new_docks_widgets[4]['dock'].toggleViewAction(),
-                self.new_docks_widgets[5]['dock'].toggleViewAction(),
                 None,
                 fill_drawing,
                 None,
@@ -599,6 +593,14 @@ class MainWindow(QtWidgets.QMainWindow):
                 None,
             ),
         )
+
+        for wi in range(len(self.new_docks_widgets)):
+            utils.addActions(
+                self.menus.view,
+                (
+                    self.new_docks_widgets[wi]['dock'].toggleViewAction(),
+                ),
+            )
 
         self.menus.file.aboutToShow.connect(self.updateFileMenu)
 
