@@ -718,7 +718,7 @@ class Canvas(QtWidgets.QWidget):
                         else QtCore.Qt.Vertical)
             else:
                 self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
-        ev.accept()
+        ev.accept()'''
 
     def keyPressEvent(self, ev):
         key = ev.key()
