@@ -619,8 +619,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.actions.tool = (
             open_,
             opendir,
-            openNextImg,
             openPrevImg,
+            openNextImg,
             save,
             deleteFile,
             None,
