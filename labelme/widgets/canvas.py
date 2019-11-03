@@ -698,8 +698,12 @@ class Canvas(QtWidgets.QWidget):
                 self.zoomRequest.emit(delta.y(), ev.pos())
             else:
                 # scroll
-                self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
-                self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
+                if QtCore.Qt.ControlModifier == QtCore.Qt.MiddleButton:
+                    self.scrollRequest.emit(delta.y(), QtCore.Qt.Horizontal)
+                else:
+                    self.scrollRequest.emit(delta.x(), QtCore.Qt.Horizontal)
+                    self.scrollRequest.emit(delta.y(), QtCore.Qt.Vertical)
+
         else:
             if ev.orientation() == QtCore.Qt.Vertical:
                 mods = ev.modifiers()
@@ -714,7 +718,7 @@ class Canvas(QtWidgets.QWidget):
                         else QtCore.Qt.Vertical)
             else:
                 self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
-        ev.accept()'''
+        ev.accept()
 
     def keyPressEvent(self, ev):
         key = ev.key()
