@@ -106,7 +106,7 @@ shortcuts:
   create_segmentation: Ctrl+S
   create_rectangle: Ctrl+R
   create_circle: null
-  create_line: null
+  create_line_new: Ctrl+I
   create_point: null
   create_linestrip: null
   edit_polygon: Ctrl+J
