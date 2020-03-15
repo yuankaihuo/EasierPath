@@ -120,7 +120,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.flag_widget.itemChanged.connect(self.setDirty)
 
         self.labelList.itemActivated.connect(self.labelSelectionChanged)
-        self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged)
+        self.labelList.itemSelectionChanged.connect(self.labelSelectionChanged) ##key
         self.labelList.itemDoubleClicked.connect(self.editLabel)
         # Connect to itemChanged to detect checkbox changes.
         self.labelList.itemChanged.connect(self.labelItemChanged)
@@ -332,7 +332,7 @@ class MainWindow(QtWidgets.QMainWindow):
         createLineMode = action(
             'Create Line',
             lambda: self.toggleDrawMode(False, createMode='line'),
-            shortcuts['create_line'],
+            shortcuts['create_line_new'],
             'objects',
             'Start drawing lines',
             enabled=False,
@@ -358,7 +358,7 @@ class MainWindow(QtWidgets.QMainWindow):
                           shortcuts['edit_polygon'], 'edit',
                           'Move and edit the selected polygons', enabled=False)
 
-        delete = action('Delete Polygons', self.deleteSelectedShape,
+        delete = action('Delete Segmentations', self.deleteSelectedShape,
                         shortcuts['delete_polygon'], 'cancel',
                         'Delete the selected polygons', enabled=False)
         copy = action('Duplicate Polygons', self.copySelectedShape,
@@ -1142,7 +1142,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         # shapes = [format_shape(shape) for shape in self.labelList.shapes]
-        flags = self.getFlags( 'Flags')
+        flags = self.getFlags('Flags')
         additional_flags = self.getAdditionalFlags()
 
         try:
@@ -1717,6 +1717,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.noShapes():
                 for action in self.actions.onShapesPresent:
                     action.setEnabled(False)
+
 
     def chshapeLineColor(self):
         color = self.colorDialog.getColor(
