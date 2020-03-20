@@ -29,6 +29,7 @@ from labelme.widgets import LabelDialog
 from labelme.widgets import LabelQListWidget
 from labelme.widgets import ToolBar
 from labelme.widgets import ZoomWidget
+from labelme.widgets import ThreshWidget
 
 from flags.flag_names import get_flags
 # FIXME
@@ -45,6 +46,7 @@ from flags.flag_names import get_flags
 class MainWindow(QtWidgets.QMainWindow):
 
     FIT_WINDOW, FIT_WIDTH, MANUAL_ZOOM = 0, 1, 2
+    MANUAL_THRESH = 2
 
     def __init__(
         self,
@@ -161,12 +163,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.file_dock.setWidget(fileListWidget)
 
         self.zoomWidget = ZoomWidget()
+        self.threshWidget = ThreshWidget() # add threshold widget
+
         self.colorDialog = ColorDialog(parent=self)
 
         self.canvas = self.labelList.canvas = Canvas(
             epsilon=self._config['epsilon'],
         )
         self.canvas.zoomRequest.connect(self.zoomRequest)
+        self.canvas.threshRequest.connect(self.threshRequest)
 
         scrollArea = QtWidgets.QScrollArea()
         scrollArea.setWidget(self.canvas)
@@ -390,6 +395,22 @@ class MainWindow(QtWidgets.QMainWindow):
         help = action('&Tutorial', self.tutorial, icon='help',
                       tip='Show tutorial page')
 
+        thresh = QtWidgets.QWidgetAction(self)
+        thresh.setDefaultWidget(self.threshWidget)
+        self.threshWidget.setWhatsThis(
+            'Zoom in or out of the image. Also accessible with '
+            '{} and {} from the canvas.'
+                .format(
+                utils.fmtShortcut(
+                    '{},{}'.format(
+                        shortcuts['thresh_up'], shortcuts['thresh_down']
+                    )
+                ),
+                utils.fmtShortcut("Ctrl+Wheel"),
+            )
+        )
+        self.threshWidget.setEnabled(True)
+
         zoom = QtWidgets.QWidgetAction(self)
         zoom.setDefaultWidget(self.zoomWidget)
         self.zoomWidget.setWhatsThis(
@@ -405,6 +426,23 @@ class MainWindow(QtWidgets.QMainWindow):
             )
         )
         self.zoomWidget.setEnabled(False)
+
+        # threshUp = action('Thresh &Up', functools.partial(self.addThresh, 1.1),
+        #                 shortcuts['thresh_up'], 'thresh-up',
+        #                 'Increase threshold', enabled=True)
+
+        threshUp = action('&Thresh Up', functools.partial(self.addThresh, 5),
+                         shortcuts['thresh_up'], 'thresh-up',
+                         'Increase threshold', enabled=True)
+
+        threshDown = action('&Thresh Down', functools.partial(self.addThresh, -5),
+                         shortcuts['thresh_down'], 'thresh-down',
+                         'Decrease threshold', enabled=True)
+
+        threshOrg = action('&Save ImageScope',
+                         functools.partial(self.saveThresh, 'ImageScope'),
+                         shortcuts['thresh_to_save'], 'thresh-save',
+                         'Save to ImageScope', enabled=True)
 
         zoomIn = action('Zoom &In', functools.partial(self.addZoom, 1.1),
                         shortcuts['zoom_in'], 'zoom-in',
@@ -428,6 +466,10 @@ class MainWindow(QtWidgets.QMainWindow):
         zoomActions = (self.zoomWidget, zoomIn, zoomOut, zoomOrg,
                        fitWindow, fitWidth)
         self.zoomMode = self.FIT_WINDOW
+
+        threshActions = (self.threshWidget, threshUp, threshDown, threshOrg)
+        self.threshMode = self.MANUAL_THRESH
+
         fitWindow.setChecked(Qt.Checked)
         self.scalers = {
             self.FIT_WINDOW: self.scaleFitWindow,
@@ -484,8 +526,10 @@ class MainWindow(QtWidgets.QMainWindow):
             createLineStripMode=createLineStripMode,
             shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
             zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
+            thresh=thresh, threshUp=threshUp, threshDown=threshDown, threshOrg=threshOrg,
             fitWindow=fitWindow, fitWidth=fitWidth,
             zoomActions=zoomActions,
+            threshActions=threshActions,
             openNextImg=openNextImg, openPrevImg=openPrevImg,
             fileMenuActions=(open_, opendir, save, saveAs, close, quit),
             tool=(),
@@ -591,6 +635,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 fitWindow,
                 fitWidth,
                 None,
+                threshUp,
+                threshDown,
+                threshOrg,
+                None,
             ),
         )
 
@@ -637,6 +685,11 @@ class MainWindow(QtWidgets.QMainWindow):
             zoomOut,
             fitWindow,
             fitWidth,
+            None,
+            threshUp,
+            thresh,
+            threshDown,
+            threshOrg,
         )
 
         self.statusBar().showMessage('%s started.' % __appname__)
@@ -660,6 +713,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fillColor = None
         self.otherData = None
         self.zoom_level = 100
+        self.thresh_level = 100
         self.fit_window = False
 
         if filename is not None and osp.isdir(filename):
@@ -700,6 +754,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Callbacks:
         self.zoomWidget.valueChanged.connect(self.paintCanvas)
+        self.threshWidget.valueChanged.connect(self.adjustThresh)
 
         self.populateModeActions()
 
@@ -1115,8 +1170,53 @@ class MainWindow(QtWidgets.QMainWindow):
         return additionalFlags
 
 
+    def saveImageScope(self, filename, flags, threshVal):
+        lf = LabelFile()
 
+        def format_shape(s):
+            dicts = dict(
+                label=s.label.encode('utf-8') if PY2 else s.label,
+                line_color=s.line_color.getRgb()
+                if s.line_color != self.lineColor else None,
+                fill_color=s.fill_color.getRgb()
+                if s.fill_color != self.fillColor else None,
+                points=[(p.x(), p.y()) for p in s.points],
+                shape_type=s.shape_type,
+                flags=s.flags
+            )
 
+            return dicts
+
+        shapes = []
+        for shape in self.labelList.shapes:
+            shape_f = format_shape(shape)
+            shapes.append(shape_f)
+
+        # shapes = [format_shape(shape) for shape in self.labelList.shapes]
+
+        try:
+            if osp.dirname(filename) and not osp.exists(osp.dirname(filename)):
+                os.makedirs(osp.dirname(filename))
+            lf.save_ImageScope(
+                filename=filename,
+                shapes=shapes,
+                flags=flags,
+                threshVal = threshVal,
+            )
+            # self.labelFile = lf
+            items = self.fileListWidget.findItems(
+                self.imagePath, Qt.MatchExactly
+            )
+            if len(items) > 0:
+                if len(items) != 1:
+                    raise RuntimeError('There are duplicate files.')
+                items[0].setCheckState(Qt.Checked)
+            # disable allows next and previous image to proceed
+            # self.filename = filename
+            return True
+        except LabelFileError as e:
+            self.errorMessage('Error saving label data', '<b>%s</b>' % e)
+            return False
 
     def saveLabels(self, filename):
         lf = LabelFile()
@@ -1186,7 +1286,7 @@ class MainWindow(QtWidgets.QMainWindow):
             self.addLabel(shape)
         self.setDirty()
 
-    def labelSelectionChanged(self):
+    def labelSelectionChanged(self):  # change the selected label in "Polygon Labels"
         if self._noSelectionSlot:
             return
         if self.canvas.editing():
@@ -1197,7 +1297,7 @@ class MainWindow(QtWidgets.QMainWindow):
             if selected_shapes:
                 self.canvas.selectShapes(selected_shapes)
 
-    def labelItemChanged(self, item):
+    def labelItemChanged(self, item):  # change item selection in "Polygon Labels"
         shape = self.labelList.get_shape_from_item(item)
         label = str(item.text())
         if label != shape.label:
@@ -1246,9 +1346,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.actions.undoLastPoint.setEnabled(False)
             self.actions.undo.setEnabled(True)
             self.setDirty()
-        else:
-            self.canvas.undoLastLine()
-            self.canvas.shapesBackups.pop()
 
     def scrollRequest(self, delta, orientation):
         units = - delta * 0.1  # natural scroll
@@ -1282,6 +1379,30 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.scrollBars[Qt.Horizontal].value() + x_shift)
             self.scrollBars[Qt.Vertical].setValue(
                 self.scrollBars[Qt.Vertical].value() + y_shift)
+
+    def setThresh(self, value):
+        self.threshMode = self.MANUAL_THRESH
+        self.threshWidget.setValue(value)
+
+    def saveThresh(self, format):
+        threshVal = 0.01 * self.threshWidget.value()
+        flags = self.labelFile.flags
+        if format == 'ImageScope':
+            label_file = osp.splitext(self.imagePath)[0] + '.xml'
+            if self.output_dir:
+                label_file_without_path = osp.basename(label_file)
+                label_file = osp.join(self.output_dir, label_file_without_path)
+            self.saveImageScope(label_file, flags, threshVal)
+
+
+    def addThresh(self, increment=1):
+        self.setThresh(self.threshWidget.value() + increment)
+
+    def threshRequest(self, delta, pos):
+        units = 1.1
+        if delta < 0:
+            units = 0.9
+        self.addThresh(units)
 
     def setFitWindow(self, value=True):
         if value:
@@ -1403,11 +1524,42 @@ class MainWindow(QtWidgets.QMainWindow):
             self.adjustScale()
         super(MainWindow, self).resizeEvent(event)
 
-    def paintCanvas(self):
+    def paintCanvas(self):  # adjust zoom value
         assert not self.image.isNull(), "cannot paint null image"
         self.canvas.scale = 0.01 * self.zoomWidget.value()
         self.canvas.adjustSize()
         self.canvas.update()
+
+    def adjustThresh(self):  # adjust zoom value
+        assert not self.image.isNull(), "cannot threshold null image"
+        threshVal = 0.01 * self.threshWidget.value()
+        for shape in self.canvas.shapes:
+            item = self.labelList.get_item_from_shape(shape)
+            label = str(item.text())
+            try:
+                label_val = float(shape.flags['prob'])
+                if label_val >= threshVal:
+                    if not self.canvas.isVisible(shape):
+                        self.canvas.setShapeVisible(shape, True)
+                else:
+                    if self.canvas.isVisible(shape):
+                        self.canvas.setShapeVisible(shape, False)
+            except:
+                aaa = 1
+            #
+            # def isfloat(value):
+            #     try:
+            #         float(value)
+            #         return True
+            #     except ValueError:
+            #         return False
+            #
+            # if label != shape.label:
+            #     shape.label = str(item.text())
+            #     self.setDirty()
+            # else:  # User probably changed item visibility
+            #     self.canvas.setShapeVisible(shape, item.checkState() == Qt.Checked)
+
 
     def adjustScale(self, initial=False):
         value = self.scalers[self.FIT_WINDOW if initial else self.zoomMode]()

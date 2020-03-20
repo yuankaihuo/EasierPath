@@ -14,3 +14,5 @@ from .label_qlist_widget import LabelQListWidget
 from .tool_bar import ToolBar
 
 from .zoom_widget import ZoomWidget
+
+from .thresh_widget import ThreshWidget

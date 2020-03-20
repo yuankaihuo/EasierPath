@@ -37,7 +37,7 @@ def main():
         help='output file or directory (if it ends with .json it is '
              'recognized as file, else as directory)'
     )
-    default_config_file = os.path.join(os.path.expanduser('~'), '.labelmerc')
+    default_config_file = os.path.join(os.path.expanduser('~'), '.labelmerc_v1_0_0')
     parser.add_argument(
         '--config',
         dest='config_file',
@@ -143,7 +143,7 @@ def main():
     if not config['labels'] and config['validate_label']:
         logger.error('--labels must be specified with --validatelabel or '
                      'validate_label: true in the config file '
-                     '(ex. ~/.labelmerc).')
+                     '(ex. ~/.labelmerc_v1_0_0).')
         sys.exit(1)
 
     output_file = None

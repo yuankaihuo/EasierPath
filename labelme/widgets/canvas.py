@@ -21,6 +21,7 @@ CURSOR_GRAB = QtCore.Qt.OpenHandCursor
 class Canvas(QtWidgets.QWidget):
 
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)
+    threshRequest = QtCore.Signal(int, QtCore.QPoint)
     scrollRequest = QtCore.Signal(int, int)
     newShape = QtCore.Signal()
     selectionChanged = QtCore.Signal(list)

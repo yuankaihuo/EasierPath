@@ -2,7 +2,8 @@ import base64
 import io
 import json
 import os.path as osp
-
+import numpy as np
+import xmltodict
 import PIL.Image
 
 from labelme._version import __version__
@@ -148,6 +149,104 @@ class LabelFile(object):
             )
             imageWidth = img_arr.shape[1]
         return imageHeight, imageWidth
+
+    def save_ImageScope(
+        self,
+        filename,
+        shapes,
+        flags=None,
+        threshVal=None,
+    ):
+
+        down_rate = flags['@DownRate']
+
+        detect_json = []
+        doc_out = {}
+        doc_out['Annotations'] = {}
+        doc_out['Annotations']['@MicronsPerPixel'] = flags['@MicronsPerPixel']
+        doc_out['Annotations']['@Level'] = flags['@Level']
+        doc_out['Annotations']['@DownRate'] = flags['@DownRate']
+        doc_out['Annotations']['@start_x'] = flags['@start_x']
+        doc_out['Annotations']['@start_y'] = flags['@start_y']
+        doc_out['Annotations']['@width_x'] = flags['@width_x']
+        doc_out['Annotations']['@height_y'] = flags['@height_y']
+        doc_out['Annotations']['@Device'] = flags['@Device']
+        doc_out['Annotations']['Annotation'] = {}
+        doc_out['Annotations']['Annotation']['@Id'] = '1'
+        doc_out['Annotations']['Annotation']['@Name'] = ''
+        doc_out['Annotations']['Annotation']['@ReadOnly'] = '0'
+        doc_out['Annotations']['Annotation']['@LineColorReadOnly'] = '0'
+        doc_out['Annotations']['Annotation']['@Incremental'] = '0'
+        doc_out['Annotations']['Annotation']['@Type'] = '4'
+        doc_out['Annotations']['Annotation']['@LineColor'] = '65280'
+        doc_out['Annotations']['Annotation']['@Visible'] = '1'
+        doc_out['Annotations']['Annotation']['@Selected'] = '1'
+        doc_out['Annotations']['Annotation']['@MarkupImagePath'] = ''
+        doc_out['Annotations']['Annotation']['@MacroName'] = ''
+        doc_out['Annotations']['Annotation']['Attributes'] = {}
+        doc_out['Annotations']['Annotation']['Attributes']['Attribute'] = {}
+        doc_out['Annotations']['Annotation']['Attributes']['Attribute']['@Name'] = 'glomerulus'
+        doc_out['Annotations']['Annotation']['Attributes']['Attribute']['@Id'] = '0'
+        doc_out['Annotations']['Annotation']['Attributes']['Attribute']['@Value'] = ''
+        doc_out['Annotations']['Annotation']['Plots'] = None
+        doc_out['Annotations']['Annotation']['Regions'] = {}
+        doc_out['Annotations']['Annotation']['Regions']['RegionAttributeHeaders'] = {}
+        doc_out['Annotations']['Annotation']['Regions']['AttributeHeader'] = []
+        doc_out['Annotations']['Annotation']['Regions']['Region'] = []
+
+        for di in range(len(shapes)):
+            detect_one = shapes[di]
+            if detect_one['flags']['prob'] < threshVal:
+                continue
+            circle = [detect_one['points'][0][0], detect_one['points'][0][1], detect_one['points'][1][1] - detect_one['points'][0][1]]
+            detect_dict = {}
+            detect_dict['@Id'] = str(di + 1)
+            detect_dict['@Type'] = '2'
+            detect_dict['@Zoom'] = '0.5'
+            detect_dict['@ImageLocation'] = ''
+            detect_dict['@ImageFocus'] = '-1'
+            detect_dict['@Length'] = '2909.1'
+            detect_dict['@Area'] = '673460.1'
+            detect_dict['@LengthMicrons'] = '727.3'
+            detect_dict['@AreaMicrons'] = '42091.3'
+            detect_dict['@Text'] = ('%.3f' % detect_one['flags']['prob'])
+            detect_dict['@NegativeROA'] = '0'
+            detect_dict['@InputRegionId'] = '0'
+            detect_dict['@Analyze'] = '0'
+            detect_dict['@DisplayId'] = str(di + 1)
+            detect_dict['Attributes'] = None
+            detect_dict['Vertices'] = '0'
+            detect_dict['Vertices'] = {}
+            detect_dict['Vertices']['Vertex'] = []
+
+            if flags['@Device'] == 'leica.device-model':
+                coord1 = {}
+                coord1['@X'] = str(flags['@height_y'] - (circle[1] - circle[2]) * down_rate)
+                coord1['@Y'] = str((circle[0] - circle[2]) * down_rate)
+                coord1['@Z'] = '0'
+                coord2 = {}
+                coord2['@X'] = str(flags['@height_y'] - (circle[1] + circle[2]) * down_rate)  # 左右
+                coord2['@Y'] = str((circle[0] + circle[2]) * down_rate)  # 上下
+                coord2['@Z'] = '0'
+                detect_dict['Vertices']['Vertex'].append(coord1)
+                detect_dict['Vertices']['Vertex'].append(coord2)
+            elif flags['@Device'] == 'aperio.Filename':
+                coord1 = {}
+                coord1['@X'] = str((circle[0] - circle[2]) * down_rate)
+                coord1['@Y'] = str((circle[1] - circle[2]) * down_rate)
+                coord1['@Z'] = '0'
+                coord2 = {}
+                coord2['@X'] = str((circle[0] + circle[2]) * down_rate)  # 左右
+                coord2['@Y'] = str((circle[1] + circle[2]) * down_rate)  # 上下
+                coord2['@Z'] = '0'
+                detect_dict['Vertices']['Vertex'].append(coord1)
+                detect_dict['Vertices']['Vertex'].append(coord2)
+            doc_out['Annotations']['Annotation']['Regions']['Region'].append(detect_dict)
+
+        out = xmltodict.unparse(doc_out, pretty=True)
+        with open(filename, 'wb') as file:
+            file.write(out.encode('utf-8'))
+
 
     def save(
         self,

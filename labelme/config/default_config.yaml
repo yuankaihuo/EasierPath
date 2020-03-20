@@ -1,7 +1,7 @@
 auto_save: false
 display_label_popup: true
 instance_label_auto_increment: true
-store_data: true
+store_data: false
 keep_prev: false
 logger_level: info
 
@@ -99,14 +99,19 @@ shortcuts:
   zoom_in: [Ctrl++, Ctrl+=]
   zoom_out: Ctrl+-
   zoom_to_original: Ctrl+0
+
+  thresh_up: [Alt++, Alt+=]
+  thresh_down: Alt+-
+  thresh_to_save: Alt+0
+
   fit_window: Ctrl+F
   fit_width: Ctrl+Shift+F
 
   create_polygon: Ctrl+N
-  create_segmentation: Ctrl+S
+  create_segmentation: Alt+S
   create_rectangle: Ctrl+R
-  create_circle: null
-  create_line_new: Ctrl+I
+  create_circle: Alt+C
+  create_line_new: Alt+L
   create_point: null
   create_linestrip: null
   edit_polygon: Ctrl+J
