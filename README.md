@@ -1,7 +1,11 @@
-# MedLabel
-tool for labeling medical images
+# Versions
+## V 1.0.0
+Make sure you delete C:\Users\huoyu\.labelmerc_v1_0_0 before using the file
 
-How to package exe file
+
+# Development
+
+## How to package exe file
 
 pip install pywin32
 
