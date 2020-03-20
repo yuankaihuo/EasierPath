@@ -1,6 +1,15 @@
 # Versions
 ## V 1.0.0
-Make sure you delete C:\Users\huoyu\.labelmerc_v1_0_0 before using the file
+Updates: 
+1. Add the function of adjusting the threshold of detections
+2. Save the detections as ImageScope file
+3. Adjust the hot keys
+
+Download: https://vanderbilt.box.com/s/juhh42e86x0wvy7fj286lrauqmanywxd
+How to use: 
+
+
+Maybe you need to delete C:\Users\huoyu\.labelmerc_v1_0_0 before using the file at the first time
 
 
 # Development
