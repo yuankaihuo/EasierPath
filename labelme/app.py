@@ -444,6 +444,11 @@ class MainWindow(QtWidgets.QMainWindow):
                          shortcuts['thresh_to_save'], 'thresh-save',
                          'Save to ImageScope', enabled=True)
 
+        savePatch = action('&Save Patch',
+                         functools.partial(self.savePatch, 'SavePatch'),
+                         shortcuts['save_patch'], 'patch-save',
+                         'Save Patch', enabled=True)
+
         zoomIn = action('Zoom &In', functools.partial(self.addZoom, 1.1),
                         shortcuts['zoom_in'], 'zoom-in',
                         'Increase zoom level', enabled=False)
@@ -467,7 +472,7 @@ class MainWindow(QtWidgets.QMainWindow):
                        fitWindow, fitWidth)
         self.zoomMode = self.FIT_WINDOW
 
-        threshActions = (self.threshWidget, threshUp, threshDown, threshOrg)
+        threshActions = (self.threshWidget, threshUp, threshDown, threshOrg, savePatch)
         self.threshMode = self.MANUAL_THRESH
 
         fitWindow.setChecked(Qt.Checked)
@@ -526,7 +531,7 @@ class MainWindow(QtWidgets.QMainWindow):
             createLineStripMode=createLineStripMode,
             shapeLineColor=shapeLineColor, shapeFillColor=shapeFillColor,
             zoom=zoom, zoomIn=zoomIn, zoomOut=zoomOut, zoomOrg=zoomOrg,
-            thresh=thresh, threshUp=threshUp, threshDown=threshDown, threshOrg=threshOrg,
+            thresh=thresh, threshUp=threshUp, threshDown=threshDown, threshOrg=threshOrg, savePatch=savePatch,
             fitWindow=fitWindow, fitWidth=fitWidth,
             zoomActions=zoomActions,
             threshActions=threshActions,
@@ -635,10 +640,6 @@ class MainWindow(QtWidgets.QMainWindow):
                 fitWindow,
                 fitWidth,
                 None,
-                threshUp,
-                threshDown,
-                threshOrg,
-                None,
             ),
         )
 
@@ -690,6 +691,7 @@ class MainWindow(QtWidgets.QMainWindow):
             thresh,
             threshDown,
             threshOrg,
+            savePatch,
         )
 
         self.statusBar().showMessage('%s started.' % __appname__)
@@ -1394,6 +1396,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 label_file = osp.join(self.output_dir, label_file_without_path)
             self.saveImageScope(label_file, flags, threshVal)
 
+    def savePatch(self, format):
+        aaa = None
 
     def addThresh(self, increment=1):
         self.setThresh(self.threshWidget.value() + increment)

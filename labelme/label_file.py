@@ -247,6 +247,14 @@ class LabelFile(object):
         with open(filename, 'wb') as file:
             file.write(out.encode('utf-8'))
 
+    def save_Patch(
+        self,
+        filename,
+        shapes,
+        flags=None,
+        threshVal=None,
+    ):
+        aaa = None
 
     def save(
         self,

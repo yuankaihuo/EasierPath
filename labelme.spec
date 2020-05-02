@@ -28,7 +28,7 @@ exe = EXE(
     a.binaries,
     a.zipfiles,
     a.datas,
-    name='EasierPath_v1.0.0',
+    name='EasierPath_v1.0.1',
     debug=False,
     strip=False,
     upx=True,

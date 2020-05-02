@@ -6,7 +6,7 @@ import sys
 from qtpy import QT_VERSION
 
 
-__appname__ = 'EasierPath_v1.0.0'
+__appname__ = 'EasierPath_v1.0.1'
 
 QT4 = QT_VERSION[0] == '4'
 QT5 = QT_VERSION[0] == '5'

@@ -107,7 +107,7 @@ def get_long_description():
 
 
 setup(
-    name='EasierPath_v1.0.0',
+    name='EasierPath_v1.0.1',
     version=version,
     packages=find_packages(),
     description='Renal Pathology Annotation with Python',
@@ -131,7 +131,7 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
     ],
-    package_data={'EasierPath_v1.0.0': ['icons/*', 'config/*.yaml']},
+    package_data={'EasierPath_v1.0.1': ['icons/*', 'config/*.yaml']},
     entry_points={
         'console_scripts': [
             'labelme=labelme.main:main',

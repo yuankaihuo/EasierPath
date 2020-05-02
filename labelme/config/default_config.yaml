@@ -103,6 +103,7 @@ shortcuts:
   thresh_up: [Alt++, Alt+=]
   thresh_down: Alt+-
   thresh_to_save: Alt+0
+  save_patch: Ctrl+Shift+Alt+P
 
   fit_window: Ctrl+F
   fit_width: Ctrl+Shift+F
