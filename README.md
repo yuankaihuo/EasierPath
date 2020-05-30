@@ -37,7 +37,7 @@ Please download openslide windows binary form
 https://openslide.org/download/
 
 Then,go to "System Properties" --> "Advanced" --> "Envrioment Variables"
-
+ 
 Find "Path" in User Variables, then add the downloaded "bin" folder to Path
  
 
