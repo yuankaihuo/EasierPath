@@ -6,7 +6,7 @@ Updates:
 #3. Adjust the hot keys
 4. Add save patch
 
-Download: https://vanderbilt.box.com/s/juhh42e86x0wvy7fj286lrauqmanywxd
+Download: https://vanderbilt.box.com/s/0a9x1l00h1gzfpvstdayvqp26p033tla
 
 How to use: https://vanderbilt.box.com/s/aih7n8h0ii4nzq34gueff9g6ops8u5aj
 
