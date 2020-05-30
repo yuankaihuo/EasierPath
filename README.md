@@ -31,3 +31,13 @@ If you see qt5 error, please copy the "imageformats" and "platforms" folders fro
 C:\Users\huoyu\Anaconda3\envs\labelme\Library\plugins\
 to "dist" folder
 
+
+Use the version with "SavePatch" in windows
+Please download openslide windows binary form
+https://openslide.org/download/
+
+Then,go to "System Properties" --> "Advanced" --> "Envrioment Variables"
+
+Find "Path" in User Variables, then add the downloaded "bin" folder to Path
+ 
+

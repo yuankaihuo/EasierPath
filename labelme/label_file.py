@@ -5,12 +5,14 @@ import os.path as osp
 import numpy as np
 import xmltodict
 import PIL.Image
+import openslide
 
 from labelme._version import __version__
 from labelme.logger import logger
 from labelme import PY2
 from labelme import QT4
 from labelme import utils
+from read_mask import read_mask
 
 from flags.flag_names import get_flags
 
@@ -249,12 +251,12 @@ class LabelFile(object):
 
     def save_Patch(
         self,
-        filename,
-        shapes,
-        flags=None,
-        threshVal=None,
+        xml_file,
+        scn_file,
+        output_dir,
     ):
-        aaa = None
+        simg = openslide.open_slide(scn_file)
+        read_mask(simg, xml_file, output_dir, boarder=1)
 
     def save(
         self,

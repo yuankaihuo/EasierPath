@@ -1171,6 +1171,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 additionalFlags[dock_widget['name']][key] = flag
         return additionalFlags
 
+    def saveScnPatch(self, xml_file, scn_file, output_dir):
+        lf = LabelFile()
+        if osp.exists(scn_file) and osp.exists(xml_file) and not osp.exists(output_dir):
+            os.makedirs(output_dir)
+        lf.save_Patch(
+            xml_file=xml_file,
+            scn_file=scn_file,
+            output_dir=output_dir,
+        )
 
     def saveImageScope(self, filename, flags, threshVal):
         lf = LabelFile()
@@ -1397,7 +1406,13 @@ class MainWindow(QtWidgets.QMainWindow):
             self.saveImageScope(label_file, flags, threshVal)
 
     def savePatch(self, format):
-        aaa = None
+        if format == 'SavePatch':
+            xml_file = osp.splitext(self.imagePath)[0] + '.xml'
+            scn_file = osp.splitext(self.imagePath)[0] + '.scn'
+            output_dir = osp.splitext(self.imagePath)[0]
+
+            self.saveScnPatch(xml_file, scn_file, output_dir)
+
 
     def addThresh(self, increment=1):
         self.setThresh(self.threshWidget.value() + increment)
