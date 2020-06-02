@@ -21,10 +21,6 @@ Maybe you need to delete C:\Users\huoyu\.labelmerc_v1_0_1 before using the file 
 This is an recorded explanation video posted on Youtube. This video contains various parts, including "How to download EasierPath", "Explanation for the toolbox", ""
 Video Address: https://vanderbilt.box.com/s/aih7n8h0ii4nzq34gueff9g6ops8u5aj
 
-### QA data
-
-Data Address: https://vumc.box.com/s/5ii4l0r3kfqxsbsfd15vc4uemyfrw0nt 
-
 ## Source Code
 
 EasierPath is a computer-human intergrated pipeline for structural objects annotation, like glomeruli, for whole slice imaging. This pipeline contains (1) Detection using deep learning, (2) Filtering with optimal threshold, (3) Manual QA by doctors, (4) Object Extraction and (5) Data Management. The related source code and binary files have been included in the Docker. They are all found in "python".
@@ -45,26 +41,6 @@ Use the version with "SavePatch" in windows
 Please download openslide windows binary form
 https://openslide.org/download/
 
-Then,go to "System Properties" --> "Advanced" --> "Envrioment Variables"
+Then, go to "System Properties" --> "Advanced" --> "Envrioment Variables"
  
 Find "Path" in User Variables, then add the downloaded "bin" folder to Path
-
-## List of XX training data and X Validation data from the study
-### XX Training data:
-
-### X Validation data:
-
-### You can download the list here
-
-## Detailed Environmental Setting
-### Testing Platform:
-- Ubuntu XX.XX
-- cuda X.X
-- Pytorch X.X
-- Docker version X.XX.X
-- Nvidia-docker version X.X.X to X.X.X
-- GPU: XXX
-
-### Download Docker
-
-## Detailed Results for each image
