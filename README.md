@@ -27,13 +27,15 @@ EasierPath is a computer-human intergrated pipeline for structural objects annot
 
 ## Development
 ### How to package exe file
-
+You can run the following command
+```
 pip install pywin32
 pip install dis3
 pip install pyinstaller
 pyinstaller labelme.spec
+```
 
-If you see qt5 error, please copy the "imageformats" and "platforms" folders from
+- If you see qt5 error, please copy the "imageformats" and "platforms" folders from
 C:\Users\huoyu\Anaconda3\envs\labelme\Library\plugins\
 to "dist" folder
 
@@ -44,3 +46,14 @@ https://openslide.org/download/
 Then, go to "System Properties" --> "Advanced" --> "Envrioment Variables"
  
 Find "Path" in User Variables, then add the downloaded "bin" folder to Path
+
+### How to use EasierPath
+- Use "Open" or "Open Dir"(Open Diractory) to open the desired project, which should include one .png file and one .xml file.
+- To change the threshold of the desired image, click "Thresh Up" or "Thresh Down". With the software processes, the final annotation of such threshold will be displayed.
+- "Zoom in" and "Zoom out" are used to enlarge or dwindle the image for better vision.
+- Go to "Edit" -> "Create Circle", one can circle and annotate the missing structural objects using this tool.
+- If the annotation is incorrect, one can simply click that circle and delete it.
+- Once all the annotations are successfully processed, one can use "Save ImageScope" button to save that image into a .scn file which can be open by ImageScope Software.
+- "Save Patches" can be used to save patches of all the annotation images for further analysis.
+
+### How to run the code and get EasierPath
