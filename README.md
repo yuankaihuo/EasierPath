@@ -6,10 +6,10 @@
 Version 1.0.1
 
 Updates:
-#1. Add the function of adjusting the threshold of detections
-#2. Save the detections as ImageScope file
-#3. Adjust the hot keys
-#4. Add the function of "save patch"
+1. Add the function of adjusting the threshold of detections
+2. Save the detections as ImageScope file
+3. Adjust the hot keys
+4. Add the function of "save patch"
 
 Download Address: https://vanderbilt.box.com/s/0a9x1l00h1gzfpvstdayvqp26p033tla
 
@@ -57,3 +57,13 @@ Find "Path" in User Variables, then add the downloaded "bin" folder to Path
 - "Save Patches" can be used to save patches of all the annotation images for further analysis.
 
 ### How to run the code and get EasierPath
+```
+pip install pyyaml
+pip install qtpy
+pip install matplotlib
+pip install pillow
+pip install termcolor
+pip install spyder
+pip install xmltodict
+pip install openslide-python
+```
