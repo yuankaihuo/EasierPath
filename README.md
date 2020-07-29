@@ -1,5 +1,19 @@
 # EasierPath: An Open-source Tool for Human-in-the-loop Deep Learning Quantification of Renal Pathology
 
+### [[project page]](https://github.com/yuankaihuo/EasierPath)  [[EasierPath paper]](https://arxiv.org/pdf/2007.13952.pdf)
+
+```diff
+- Please cite the following EasierPath paper, if you used the EasierPath.
+```
+The papers can be found [EasierPath](https://arxiv.org/pdf/2007.13952.pdf), whole full citation is
+
+Zheyu Zhu, Yuzhe Lu, Ruining Deng, Haichun Yang, Agnes B. Fogo, Yuankai Huo. "EasierPath: An Open-source Tool for Human-in-the-loop Deep Learning Quantification of Renal Pathology" MACCI-LABELS 2020.
+
+```diff
++ The code and docker are free for noncommercial purposes.
++ The licence.md shows the terms for commercial and for-profit purposes.
+```
+
 ## Quick Start
 ### Get our software: 
 
